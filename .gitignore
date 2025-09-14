@@ -15,9 +15,11 @@ venv/
 
 # Jupyter Notebook checkpoints
 .ipynb_checkpoints/
+*.ipynb
 
 # Streamlit cache
 .streamlit/
 
 # macOS system files
 .DS_Store
+Thumbs.db
