@@ -4,8 +4,8 @@ import yfinance as yf
 import altair as alt
 
 # Page Config
-st.set_page_config(page_title="Stock Analysis", layout="wide")
-st.title("Stock Analysis :chart_with_upwards_trend:")
+# st.set_page_config(page_title="Stock Analysis", layout="wide")
+st.title("Summary")
 
 # Sidebar
 st.sidebar.header("Filters")
@@ -53,58 +53,6 @@ col3, col4, col5 = st.columns(3)
 col3.metric("Last Price", f"{currency} {last_price:,.2f}")
 col4.metric("Percent Change", f"{day_percent_change:.1%}")
 col5.metric("Market Cap", f"{currency} {market_cap / 1e9:,.1f} B")
-
-# --- Financials ---
-
-st.divider()
-st.header("Financials")
-
-financials = ticker.financials
-
-# Income statement
-
-income_statement = ticker.income_stmt
-
-financial_metrics = ["Total Revenue", "Gross Profit", "Operating Income", "Net Income"]
-financial_metric = st.selectbox(label="Financial Metric", options=financial_metrics, index=0, accept_new_options=False)
-
-# Income statement
-financial_metric_data = income_statement.loc[financial_metric]
-# st.subheader(f"{financial_metric}")
-
-df_financial_metric = pd.DataFrame({
-    "date": financial_metric_data.index,
-    "year": financial_metric_data.index.year,
-    financial_metric: financial_metric_data.values
-}).reset_index(drop=True)
-
-financial_metric_chart = (
-    alt.Chart(df_financial_metric)
-    .mark_bar()
-    .encode(
-        # x=alt.X(field="date", type="temporal", timeUnit="year", title="Year"),
-        x=alt.X(field="year", type="ordinal", title="Year", axis=alt.Axis(labelAngle=0)),
-        y=alt.Y(field=financial_metric, type="quantitative", title=financial_metric),
-        tooltip=[alt.Tooltip(field="year", type="ordinal", title="Year"),
-                 alt.Tooltip(field=financial_metric, format=",.0f", title=financial_metric)]
-    )
-)
-
-# theme_base = st.get_option("theme.base")
-# label_colour = "black" if theme_base == "light" else "white"
-#
-# financial_metric_chart_text = (
-#     alt.Chart(df_financial_metric)
-#     .mark_text(dy=-10, color=label_colour)
-#     .encode(
-#         # x=alt.X(field="date", type="ordinal", timeUnit="year", title="Year"),
-#         x=alt.X(field="year", type="ordinal", title="Year", axis=alt.Axis(labelAngle=0)),
-#         y=alt.Y(field=financial_metric, type="quantitative", title=financial_metric),
-#         text=alt.Text(field=financial_metric, type="quantitative", format=",.0f")
-#     )
-# )
-
-st.altair_chart(financial_metric_chart)
 
 # --- Price Analysis ---
 
@@ -161,3 +109,55 @@ st.header("Price Analysis")
 chart = (price_history_line + price_points + rule)
 
 st.altair_chart(chart)
+
+# --- Financials ---
+
+st.divider()
+st.header("Financials")
+
+financials = ticker.financials
+
+# Income statement
+
+income_statement = ticker.income_stmt
+
+financial_metrics = ["Total Revenue", "Gross Profit", "Operating Income", "Net Income"]
+financial_metric = st.selectbox(label="Financial Metric", options=financial_metrics, index=0, accept_new_options=False)
+
+# Income statement
+financial_metric_data = income_statement.loc[financial_metric]
+# st.subheader(f"{financial_metric}")
+
+df_financial_metric = pd.DataFrame({
+    "date": financial_metric_data.index,
+    "year": financial_metric_data.index.year,
+    financial_metric: financial_metric_data.values
+}).reset_index(drop=True)
+
+financial_metric_chart = (
+    alt.Chart(df_financial_metric)
+    .mark_bar()
+    .encode(
+        # x=alt.X(field="date", type="temporal", timeUnit="year", title="Year"),
+        x=alt.X(field="year", type="ordinal", title="Year", axis=alt.Axis(labelAngle=0)),
+        y=alt.Y(field=financial_metric, type="quantitative", title=financial_metric),
+        tooltip=[alt.Tooltip(field="year", type="ordinal", title="Year"),
+                 alt.Tooltip(field=financial_metric, format=",.0f", title=financial_metric)]
+    )
+)
+
+# theme_base = st.get_option("theme.base")
+# label_colour = "black" if theme_base == "light" else "white"
+#
+# financial_metric_chart_text = (
+#     alt.Chart(df_financial_metric)
+#     .mark_text(dy=-10, color=label_colour)
+#     .encode(
+#         # x=alt.X(field="date", type="ordinal", timeUnit="year", title="Year"),
+#         x=alt.X(field="year", type="ordinal", title="Year", axis=alt.Axis(labelAngle=0)),
+#         y=alt.Y(field=financial_metric, type="quantitative", title=financial_metric),
+#         text=alt.Text(field=financial_metric, type="quantitative", format=",.0f")
+#     )
+# )
+
+st.altair_chart(financial_metric_chart)
